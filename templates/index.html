@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather App</title>
+    <style>
+ body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        form {
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        label {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        input {
+            padding: 8px;
+            font-size: 16px;
+        }
+
+        button {
+            padding: 10px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        #currentWeather, #futureWeather {
+            margin-top: 20px;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        #currentIcon {
+            max-width: 50px;
+        }
+
+        .forecast-item {
+            margin-top: 10px;
+        }    </style>
+</head>
+<body>
+    <h1>Weather App</h1>
+
+    <form id="weatherForm">
+        <label for="city">Enter City:</label>
+        <input type="text" id="city" name="city" required>
+        <button type="submit">Get Weather</button>
+    </form>
+
+    <div id="currentWeather">
+        <h2>Current Weather</h2>
+        <p id="currentCity"></p>
+        <p id="currentTemperature"></p>
+        <p id="currentDescription"></p>
+        <img id="currentIcon" alt="Current Weather Icon">
+    </div>
+
+    <div id="futureWeather">
+        <h2>Future Weather</h2>
+        <div id="forecast" class="forecast-item"></div>
+    </div>
+
+    <script>
+        document.getElementById('weatherForm').addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            var city = document.getElementById('city').value;
+
+            fetch('/get_weather', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams({
+                    'city': city,
+                }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert(data.error);
+                } else {
+                    // Display current weather
+                    document.getElementById('currentCity').textContent = 'City: ' + data.city;
+                    document.getElementById('currentTemperature').textContent = 'Temperature: ' + data.temperature + '°C';
+                    document.getElementById('currentDescription').textContent = 'Description: ' + data.description;
+                    document.getElementById('currentIcon').src = 'http://openweathermap.org/img/wn/' + data.icon + '.png';
+
+                    // Display future weather (for demonstration purposes, you can replace this with actual forecast data)
+                    var forecastElement = document.getElementById('forecast');
+                    forecastElement.innerHTML = '';
+                    for (var i = 1; i <= 5; i++) {
+                        var forecastItem = document.createElement('div');
+                        forecastItem.className = 'forecast-item';
+                        forecastItem.textContent = 'Day ' + i + ': Forecast Data';  // Replace with actual forecast data
+                        forecastElement.appendChild(forecastItem);
+                    }
+                }
+            })
+            .catch(error => alert('An error occurred while fetching weather data.'));
+        });
+    </script>
+</body>
+</html>
