@@ -4,7 +4,7 @@ import requests
 
 app = Flask(__name__)
 
-api_key = '99bfb66b2a786503cd7248953b728b5d'
+api_key = ''
 api_base_url = 'http://api.openweathermap.org/data/2.5/weather'
 
 @app.route('/')
